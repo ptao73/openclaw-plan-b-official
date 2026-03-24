@@ -4,6 +4,16 @@
 
 基于 OpenClaw 2026.3.13 官方框架，在两台服务器上部署七个 AI 角色，实现双模型对抗式协作。
 
+本仓库已经整理为可独立发布的 GitHub 项目。仓库中不包含真实 API Key、Bot Token、隧道凭据或服务器私钥，所有配置文件都使用占位符或环境变量方案。
+
+## 项目亮点
+
+- 基于官方 OpenClaw 方案，适合直接落地双节点部署
+- HK 中控负责规划、整合与 Telegram 交互，AWS worker 负责海外检索和对抗式起草
+- 支持 SSH Tunnel、Cloudflare Tunnel、直连三层通信思路
+- 同时覆盖部署脚本、SOUL 模板、配置样例和跨机调度脚本
+- 文档基于真实上线经验整理，包含已验证的踩坑记录
+
 ## 系统架构
 
 ```
@@ -219,4 +229,4 @@ curl -s -X POST http://127.0.0.1:28789/hooks/agent \
 2. **Webhook 单向** — `ok:true` 只代表任务接收，不是完成。结果需要 SSH 拉取。
 3. **SOUL.md 指令非强制** — agent 不一定按 SOUL.md 的 curl 指令回传结果，封装成脚本更可靠。
 
-详见 [LESSONS.md](../LESSONS.md)。
+详见 [LESSONS.md](LESSONS.md)。
