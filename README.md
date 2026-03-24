@@ -1,5 +1,7 @@
 # Plan B: 官方 OpenClaw 双节点对抗式协作系统
 
+[中文](README.md) | [English](README.en.md)
+
 > 状态：✅ 已部署并跑通（2026年3月16日）
 
 基于 OpenClaw 2026.3.13 官方框架，在两台服务器上部署七个 AI 角色，实现双模型对抗式协作。
