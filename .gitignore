@@ -1,0 +1,21 @@
+# API Keys and secrets
+*.env
+env.sh
+auth-profiles.json
+
+# OpenClaw runtime
+.openclaw/
+sessions/
+*.jsonl
+
+# SSH keys
+*.pem
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Python
+__pycache__/
+*.pyc
+.venv/

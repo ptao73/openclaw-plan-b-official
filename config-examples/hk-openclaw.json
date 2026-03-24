@@ -1,0 +1,75 @@
+{
+  "_comment": "HK 中控 openclaw.json 示例 — 四角色 Qwen 配置",
+  "_note": "provider 名称在 onboard 后可能被映射，以 openclaw agents list 显示为准",
+
+  "models": {
+    "mode": "merge",
+    "providers": {
+      "YOUR_QWEN_PROVIDER": {
+        "baseUrl": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+        "apiKey": "YOUR_QWEN_API_KEY",
+        "api": "openai-completions",
+        "models": [
+          {"id": "qwen-plus", "name": "Qwen Plus", "reasoning": false, "input": ["text"], "contextWindow": 131072, "maxTokens": 8192},
+          {"id": "qwen-turbo", "name": "Qwen Turbo", "reasoning": false, "input": ["text"], "contextWindow": 131072, "maxTokens": 8192}
+        ]
+      }
+    }
+  },
+
+  "agents": {
+    "defaults": {
+      "model": {
+        "primary": "YOUR_QWEN_PROVIDER/qwen-plus",
+        "fallbacks": ["YOUR_QWEN_PROVIDER/qwen-turbo"]
+      },
+      "compaction": {"mode": "safeguard"},
+      "maxConcurrent": 4,
+      "subagents": {"maxConcurrent": 4}
+    },
+    "list": [
+      {
+        "id": "planner",
+        "name": "💡 Planner",
+        "default": true,
+        "workspace": "~/.openclaw/workspace-planner",
+        "model": {"primary": "YOUR_QWEN_PROVIDER/qwen-plus", "fallbacks": ["YOUR_QWEN_PROVIDER/qwen-turbo"]},
+        "subagents": {
+          "allowAgents": ["drafter-a", "researcher", "reviewer-hk"]
+        }
+      },
+      {
+        "id": "drafter-a",
+        "name": "📝 Drafter-A",
+        "workspace": "~/.openclaw/workspace-drafter-a",
+        "model": {"primary": "YOUR_QWEN_PROVIDER/qwen-plus", "fallbacks": ["YOUR_QWEN_PROVIDER/qwen-turbo"]}
+      },
+      {
+        "id": "researcher",
+        "name": "🔍 Researcher",
+        "workspace": "~/.openclaw/workspace-researcher",
+        "model": {"primary": "YOUR_QWEN_PROVIDER/qwen-turbo", "fallbacks": ["YOUR_QWEN_PROVIDER/qwen-plus"]}
+      },
+      {
+        "id": "reviewer-hk",
+        "name": "🔎 Reviewer-HK",
+        "workspace": "~/.openclaw/workspace-reviewer-hk",
+        "model": {"primary": "YOUR_QWEN_PROVIDER/qwen-plus", "fallbacks": ["YOUR_QWEN_PROVIDER/qwen-turbo"]}
+      }
+    ]
+  },
+
+  "hooks": {
+    "enabled": true,
+    "token": "YOUR_HK_HOOKS_TOKEN (must differ from gateway.auth.token)",
+    "path": "/hooks",
+    "defaultSessionKey": "hook:aws-callback",
+    "allowRequestSessionKey": true,
+    "allowedSessionKeyPrefixes": ["hook:"]
+  },
+
+  "gateway": {
+    "port": 18789,
+    "auth": {"mode": "token", "token": "YOUR_HK_GATEWAY_TOKEN"}
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "_comment": "AWS Tokyo Worker openclaw.json 示例 — 三角色 DeepSeek 配置",
+
+  "models": {
+    "mode": "merge",
+    "providers": {
+      "deepseek": {
+        "baseUrl": "https://api.deepseek.com/v1",
+        "apiKey": "FROM_ENV_OR_AUTH_PROFILES",
+        "api": "openai-completions",
+        "models": [
+          {"id": "deepseek-chat", "name": "DeepSeek Chat V3", "reasoning": false, "input": ["text"], "contextWindow": 128000, "maxTokens": 8192},
+          {"id": "deepseek-reasoner", "name": "DeepSeek Reasoner R1", "reasoning": true, "input": ["text"], "contextWindow": 128000, "maxTokens": 65536}
+        ]
+      }
+    }
+  },
+
+  "agents": {
+    "defaults": {
+      "model": {"primary": "deepseek/deepseek-chat", "fallbacks": ["deepseek/deepseek-reasoner"]},
+      "compaction": {"mode": "safeguard"},
+      "maxConcurrent": 4,
+      "subagents": {"maxConcurrent": 4}
+    },
+    "list": [
+      {
+        "id": "overseas-researcher",
+        "name": "🌐 Overseas Researcher",
+        "default": true,
+        "workspace": "~/.openclaw/workspace-overseas-researcher",
+        "model": {"primary": "deepseek/deepseek-chat", "fallbacks": []}
+      },
+      {
+        "id": "critic",
+        "name": "🔥 Critic",
+        "workspace": "~/.openclaw/workspace-critic",
+        "model": {"primary": "deepseek/deepseek-reasoner", "fallbacks": ["deepseek/deepseek-chat"]}
+      },
+      {
+        "id": "drafter-b",
+        "name": "📝 Drafter-B",
+        "workspace": "~/.openclaw/workspace-drafter-b",
+        "model": {"primary": "deepseek/deepseek-chat", "fallbacks": []}
+      }
+    ]
+  },
+
+  "channels": {},
+  "tools": {"profile": "coding"},
+  "commands": {"native": "auto", "restart": true},
+  "session": {"dmScope": "per-channel-peer"},
+
+  "gateway": {
+    "port": 18789,
+    "mode": "local",
+    "bind": "loopback",
+    "auth": {"mode": "token", "token": "YOUR_AWS_GATEWAY_TOKEN"}
+  },
+
+  "hooks": {
+    "enabled": true,
+    "token": "YOUR_AWS_HOOKS_TOKEN (must differ from gateway token)",
+    "path": "/hooks",
+    "defaultSessionKey": "hook:ingress",
+    "allowRequestSessionKey": true,
+    "allowedSessionKeyPrefixes": ["hook:"],
+    "allowedAgentIds": ["overseas-researcher", "critic", "drafter-b", "*"]
+  }
+}
